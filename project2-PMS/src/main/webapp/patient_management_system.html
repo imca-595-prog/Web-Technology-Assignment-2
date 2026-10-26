@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Patient Management System – Register, log in, and manage your hospital appointments.">
+    <title>Patient Management System</title>
+    <link rel="stylesheet" href="patient_management_system.css">
+</head>
+<body>
+
+<!-- ============================================================
+     NAVBAR
+     ============================================================ -->
+<nav class="navbar">
+    <div class="brand">
+        <span class="icon">🏥</span>
+        <span class="brand-text">Patient Management System</span>
+    </div>
+    <div class="nav-links">
+        <a href="patient_management_system.jsp" id="navDashboard" style="display:none;">Dashboard</a>
+    </div>
+</nav>
+
+<!-- ============================================================
+     AUTH CONTAINER (Login + Register tabs)
+     ============================================================ -->
+<div class="auth-container">
+    <div class="auth-box wide">
+
+        <!-- Hospital logo + title -->
+        <div class="auth-logo">
+            <div class="hospital-icon">🏥</div>
+        </div>
+        <h1>Patient Management System</h1>
+        <p class="subtitle">Register or log in to manage your appointments</p>
+
+        <!-- Tab buttons to switch between Login and Register -->
+        <div class="tab-buttons">
+            <button class="tab-btn active" id="btnLoginTab" onclick="showTab('login')">Login</button>
+            <button class="tab-btn"        id="btnRegisterTab" onclick="showTab('register')">Register</button>
+        </div>
+
+        <!-- ====================================================
+             GLOBAL MESSAGE AREA
+             Success/error messages from JSP are shown here
+             ==================================================== -->
+        <div id="globalMessage"></div>
+
+        <!-- ====================================================
+             LOGIN FORM
+             ==================================================== -->
+        <div id="loginSection">
+            <form id="loginForm" action="patient_management_system.jsp" method="post" onsubmit="return validateLogin()">
+                <!-- Hidden field tells the JSP which action to perform -->
+                <input type="hidden" name="action" value="login">
+
+                <div class="form-group">
+                    <label for="loginPhone">Phone Number <span class="required">*</span></label>
+                    <input type="tel" id="loginPhone" name="phone" class="form-control"
+                           placeholder="Enter your phone number" maxlength="15" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">Password <span class="required">*</span></label>
+                    <input type="password" id="loginPassword" name="password" class="form-control"
+                           placeholder="Enter your password" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="loginBtn">Login</button>
+
+                <p class="text-center mt-16" style="font-size:0.9rem; color:#5f6368;">
+                    Don't have an account?
+                    <a href="#" class="link-btn" onclick="showTab('register'); return false;">Register here</a>
+                </p>
+            </form>
+        </div>
+
+        <!-- ====================================================
+             REGISTRATION FORM
+             ==================================================== -->
+        <div id="registerSection" style="display:none;">
+            <form id="registerForm" action="patient_management_system.jsp" method="post" onsubmit="return validateRegister()">
+                <!-- Hidden field tells the JSP which action to perform -->
+                <input type="hidden" name="action" value="register">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="regFirstName">First Name <span class="required">*</span></label>
+                        <input type="text" id="regFirstName" name="first_name" class="form-control"
+                               placeholder="First name" maxlength="50" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regLastName">Last Name <span class="required">*</span></label>
+                        <input type="text" id="regLastName" name="last_name" class="form-control"
+                               placeholder="Last name" maxlength="50" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="regDob">Date of Birth <span class="required">*</span></label>
+                        <input type="date" id="regDob" name="date_of_birth" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regGender">Gender <span class="required">*</span></label>
+                        <select id="regGender" name="gender" class="form-control" required>
+                            <option value="">-- Select Gender --</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="regBlood">Blood Group <span class="required">*</span></label>
+                        <select id="regBlood" name="blood_group" class="form-control" required>
+                            <option value="">-- Select Blood Group --</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPhone">Phone Number <span class="required">*</span></label>
+                        <input type="tel" id="regPhone" name="phone" class="form-control"
+                               placeholder="10-15 digit phone number" maxlength="15" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="regEmail">Email Address <span class="required">*</span></label>
+                    <input type="email" id="regEmail" name="email" class="form-control"
+                           placeholder="your@email.com" maxlength="100" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="regAddress">Address <span class="required">*</span></label>
+                    <input type="text" id="regAddress" name="address" class="form-control"
+                           placeholder="Full residential address" maxlength="255" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="regPassword">Password <span class="required">*</span></label>
+                        <input type="password" id="regPassword" name="password" class="form-control"
+                               placeholder="Min 6 characters" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regConfirmPass">Confirm Password <span class="required">*</span></label>
+                        <input type="password" id="regConfirmPass" name="confirm_password" class="form-control"
+                               placeholder="Repeat your password" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="registerBtn">Create Account</button>
+
+                <p class="text-center mt-16" style="font-size:0.9rem; color:#5f6368;">
+                    Already registered?
+                    <a href="#" class="link-btn" onclick="showTab('login'); return false;">Login here</a>
+                </p>
+            </form>
+        </div>
+
+    </div><!-- /auth-box -->
+</div><!-- /auth-container -->
+
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+// ---------------------------------------------------------------
+// 1. Read URL parameters to show messages from the JSP
+//    e.g., ?msg=login_success or ?error=invalid_credentials
+// ---------------------------------------------------------------
+document.addEventListener('DOMContentLoaded', function () {
+    var params = new URLSearchParams(window.location.search);
+    var msgCode = params.get('msg');
+    var errCode = params.get('error');
+    var tab     = params.get('tab');
+
+    // Show the correct tab if specified
+    if (tab === 'register') {
+        showTab('register');
+    }
+
+    // Success messages
+    if (msgCode === 'registered') {
+        showGlobalMessage('success', '✅ Registration successful! Please log in with your phone number and password.');
+        showTab('login');
+    }
+    if (msgCode === 'logged_out') {
+        showGlobalMessage('info', 'ℹ️ You have been logged out successfully.');
+    }
+    if (msgCode === 'deleted') {
+        showGlobalMessage('success', '✅ Appointment deleted successfully.');
+    }
+    if (msgCode === 'updated') {
+        showGlobalMessage('success', '✅ Appointment updated successfully.');
+    }
+    if (msgCode === 'booked') {
+        showGlobalMessage('success', '✅ Appointment booked successfully.');
+    }
+
+    // Error messages
+    if (errCode === 'invalid_credentials') {
+        showGlobalMessage('error', '❌ Invalid phone number or password. Please try again.');
+        showTab('login');
+    }
+    if (errCode === 'duplicate_email') {
+        showGlobalMessage('error', '❌ This email address is already registered. Use a different email.');
+        showTab('register');
+    }
+    if (errCode === 'duplicate_phone') {
+        showGlobalMessage('error', '❌ This phone number is already registered. Use a different number.');
+        showTab('register');
+    }
+    if (errCode === 'reg_failed') {
+        showGlobalMessage('error', '❌ Registration failed due to a server error. Please try again.');
+        showTab('register');
+    }
+    if (errCode === 'db_error') {
+        showGlobalMessage('error', '❌ Database error. Please check your connection and try again.');
+    }
+});
+
+// ---------------------------------------------------------------
+// 2. Tab switching function
+// ---------------------------------------------------------------
+function showTab(tabName) {
+    var loginSection    = document.getElementById('loginSection');
+    var registerSection = document.getElementById('registerSection');
+    var btnLogin        = document.getElementById('btnLoginTab');
+    var btnRegister     = document.getElementById('btnRegisterTab');
+
+    if (tabName === 'login') {
+        loginSection.style.display    = 'block';
+        registerSection.style.display = 'none';
+        btnLogin.classList.add('active');
+        btnRegister.classList.remove('active');
+    } else {
+        loginSection.style.display    = 'none';
+        registerSection.style.display = 'block';
+        btnLogin.classList.remove('active');
+        btnRegister.classList.add('active');
+    }
+}
+
+// ---------------------------------------------------------------
+// 3. Display a message in the global message area
+// ---------------------------------------------------------------
+function showGlobalMessage(type, text) {
+    var box = document.getElementById('globalMessage');
+    box.innerHTML = '<div class="alert alert-' + type + '">' + text + '</div>';
+}
+
+// ---------------------------------------------------------------
+// 4. Client-side login form validation
+// ---------------------------------------------------------------
+function validateLogin() {
+    var phone    = document.getElementById('loginPhone').value.trim();
+    var password = document.getElementById('loginPassword').value.trim();
+
+    if (!phone) {
+        showGlobalMessage('error', '❌ Please enter your phone number.');
+        return false;
+    }
+    if (!/^\d{10,15}$/.test(phone)) {
+        showGlobalMessage('error', '❌ Phone number must be 10 to 15 digits.');
+        return false;
+    }
+    if (!password) {
+        showGlobalMessage('error', '❌ Please enter your password.');
+        return false;
+    }
+    return true; // allow form to submit
+}
+
+// ---------------------------------------------------------------
+// 5. Client-side registration form validation
+// ---------------------------------------------------------------
+function validateRegister() {
+    var firstName   = document.getElementById('regFirstName').value.trim();
+    var lastName    = document.getElementById('regLastName').value.trim();
+    var dob         = document.getElementById('regDob').value;
+    var gender      = document.getElementById('regGender').value;
+    var bloodGroup  = document.getElementById('regBlood').value;
+    var phone       = document.getElementById('regPhone').value.trim();
+    var email       = document.getElementById('regEmail').value.trim();
+    var address     = document.getElementById('regAddress').value.trim();
+    var password    = document.getElementById('regPassword').value;
+    var confirmPass = document.getElementById('regConfirmPass').value;
+
+    if (!firstName || !lastName) {
+        showGlobalMessage('error', '❌ Please enter your first and last name.');
+        return false;
+    }
+    if (!dob) {
+        showGlobalMessage('error', '❌ Please enter your date of birth.');
+        return false;
+    }
+    // Date of birth must be in the past
+    if (new Date(dob) >= new Date()) {
+        showGlobalMessage('error', '❌ Date of birth must be in the past.');
+        return false;
+    }
+    if (!gender) {
+        showGlobalMessage('error', '❌ Please select your gender.');
+        return false;
+    }
+    if (!bloodGroup) {
+        showGlobalMessage('error', '❌ Please select your blood group.');
+        return false;
+    }
+    if (!/^\d{10,15}$/.test(phone)) {
+        showGlobalMessage('error', '❌ Phone number must be 10 to 15 digits (numbers only).');
+        return false;
+    }
+    // Simple email format check
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showGlobalMessage('error', '❌ Please enter a valid email address.');
+        return false;
+    }
+    if (!address) {
+        showGlobalMessage('error', '❌ Please enter your address.');
+        return false;
+    }
+    if (password.length < 6) {
+        showGlobalMessage('error', '❌ Password must be at least 6 characters long.');
+        return false;
+    }
+    if (password !== confirmPass) {
+        showGlobalMessage('error', '❌ Password and Confirm Password do not match.');
+        return false;
+    }
+
+    return true; // allow form to submit
+}
+</script>
+
+</body>
+</html>
